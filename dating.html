@@ -387,6 +387,7 @@
             gap: 20px;
         }
 
+        /* ===== 关键修复：卡片用 div，不是 a ===== */
         .article-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -396,7 +397,6 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            text-decoration: none;
             display: block;
             color: inherit;
         }
@@ -430,7 +430,6 @@
         .article-title {
             font-size: 20px;
             color: var(--text-primary);
-            text-decoration: none;
             display: block;
             margin-bottom: 14px;
             line-height: 1.6;
@@ -484,7 +483,7 @@
             border-color: var(--red-primary);
         }
 
-        /* 文章原文跳转链接 */
+        /* 文章原文跳转链接 - 独立 a 标签 */
         .article-source {
             display: inline-flex;
             align-items: center;
@@ -578,6 +577,7 @@
         }
     </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
     <canvas id="particles-canvas"></canvas>
@@ -631,7 +631,8 @@
             </div>
 
             <div class="article-list" id="articleList">
-                <a href="6namespace.html" class="article-card" data-title="容器安全之 Linux Namespace 6大隔离机制">
+                <!-- ===== 关键修复：卡片用 div + data-href，内部 article-source 用 a ===== -->
+                <div class="article-card" data-href="6namespace.html" data-title="容器安全之 Linux Namespace 6大隔离机制">
                     <div class="article-title">容器安全之～Linux Namespace 6大隔离机制：PID 隔离、网络隔离、挂载隔离、UTS 隔离、IPC 隔离、用户隔离</div>
                     <div class="article-meta">[ <span>2026-08-09</span> ]  容器安全系列  //  阅读时间: 1小时</div>
                     <div class="article-footer">
@@ -644,12 +645,12 @@
                             <span class="tag">IPC</span>
                             <span class="tag">User</span>
                         </div>
-                        <a href="https://blog.csdn.net/jiangshanglixin/article/details/163613284?spm=1001.2014.3001.5501" target="_blank" class="article-source" onclick="event.stopPropagation();">
+                        <a href="https://blog.csdn.net/jiangshanglixin/article/details/163613284?spm=1001.2014.3001.5501" target="_blank" class="article-source">
                             <svg viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5c-1.11 0-2 .89-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg>
                             <span>文章原文</span>
                         </a>
                     </div>
-                </a>
+                </div>
             </div>
 
             <div class="no-results" id="noResults" style="display: none;">
@@ -761,6 +762,18 @@
 
         init();
         animate();
+
+        // ===== 关键修复：卡片点击跳转 =====
+        document.querySelectorAll('.article-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // 如果点击的是内部的 a 标签（文章原文），不跳转
+                if (e.target.closest('a')) return;
+                const href = card.getAttribute('data-href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
 
         // 搜索功能
         const searchInput = document.getElementById('searchInput');
