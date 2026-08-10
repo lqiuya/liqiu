@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<style>
+:root {
+  --bg: #181c22;
+  --bg-card: #1e232a;
+  --bg-sidebar: #1a1e24;
+  --bg-sidebar-hover: #252a32;
+  --bg-sidebar-active: #282e36;
+  --border: #30363d;
+  --border-light: #3d444d;
+  --text: #c9d1d9;
+  --text-dim: #8b949e;
+  --text-bright: #e6edf3;
+  --text-muted: #6e7681;
+  --accent: #6b7b8f;
+  --accent-green: #5a6a7a;
+  --accent-orange: #7a8a9a;
+  --accent-purple: #5e6e7e;
+  --code-bg: #1a2028;
+  --sidebar-width: 260px;
+  --font-main: "Noto Sans SC","PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  --font-mono: "JetBrains Mono","Fira Code","Cascadia Code","Consolas",monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-main);
+  font-size: 15.5px;
+  line-height: 1.8;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== 左侧导航栏 ===== */
+#sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.nav-brand {
+  padding: 24px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.nav-brand-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg,var(--accent) 0%,var(--accent-purple) 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(88,166,255,0.2);
+}
+.nav-brand-text { flex: 1; min-width: 0; }
+.nav-brand-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-brand-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.nav-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 16px;
+  opacity: 0.5;
+}
+.nav-list {
+  list-style: none;
+  padding: 12px 12px;
+  flex: 1;
+  overflow-y: auto;
+}
+.nav-item { margin-bottom: 4px; }
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+.nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+  transform: scaleY(0);
+  transition: transform 0.2s ease;
+}
+.nav-link:hover {
+  background: var(--bg-sidebar-hover);
+  color: var(--text);
+}
+.nav-link:hover::before { transform: scaleY(1); }
+.nav-link.active {
+  background: var(--bg-sidebar-active);
+  color: var(--text-bright);
+}
+.nav-link.active::before { transform: scaleY(1); }
+.nav-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(88,166,255,0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  min-width: 26px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.nav-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 26px;
+  text-align: center;
+}
+.nav-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-tag {
+  font-size: 10px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.nav-home .nav-link { color: var(--text); font-weight: 600; }
+.nav-home .nav-icon { font-size: 15px; }
+.nav-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  flex-shrink: 0;
+}
+.nav-footer-line {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ===== 主内容区 ===== */
+#main-content {
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  padding: 0;
+  transition: margin-left 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.content-wrapper {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 40px 50px;
+}
+
+/* ===== 移动端切换按钮 ===== */
+#nav-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1001;
+  width: 42px;
+  height: 42px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 18px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+#nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+/* ===== 内容样式优化 ===== */
+h1,h2,h3,h4,h5,h6 {
+  color: var(--text-bright);
+  font-weight: 600;
+  margin-top: 2.2em;
+  margin-bottom: 0.7em;
+  padding-bottom: 0.35em;
+  scroll-margin-top: 30px;
+}
+h1 {
+  font-size: 2.2em;
+  color: #e74c3c;
+  border-bottom: 2px solid #e74c3c;
+  padding-bottom: 0.4em;
+  margin-top: 0;
+  letter-spacing: -0.5px;
+}
+h2 {
+  font-size: 1.6em;
+  color: #e74c3c;
+  border-bottom: 1px solid var(--border);
+}
+h3 {
+  font-size: 1.25em;
+  color: #c0392b;
+  border-bottom: none;
+  margin-top: 1.8em;
+}
+h4 {
+  font-size: 1.1em;
+  color: #a93226;
+  border-bottom: none;
+  margin-top: 1.5em;
+}
+p { margin-bottom: 1em; color: var(--text); }
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 1.2em 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+code {
+  background: var(--code-bg);
+  color: var(--accent-green);
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 0.88em;
+  font-family: var(--font-mono);
+  border: 1px solid var(--border);
+}
+pre code { background: transparent; color: var(--text); padding: 0; border: none; font-size: 13px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+th,td {
+  border: 1px solid var(--border);
+  padding: 11px 16px;
+  text-align: left;
+}
+th { background: var(--bg-card); color: var(--text-bright); font-weight: 600; font-size: 13.5px; }
+td { color: var(--text); }
+tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+blockquote {
+  border-left: 4px solid var(--accent);
+  background: var(--bg-card);
+  margin: 1.2em 0;
+  padding: 14px 22px;
+  border-radius: 0 10px 10px 0;
+  color: var(--text-dim);
+  font-size: 14.5px;
+}
+blockquote p { margin-bottom: 0.5em; }
+blockquote p:last-child { margin-bottom: 0; }
+img { max-width: 100%; border-radius: 10px; border: 1px solid var(--border); margin: 1em 0; }
+figure { margin: 1.5em 0; }
+figcaption { text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 8px; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2.5em 0; }
+ol,ul { margin: 1em 0 1em 1.8em; color: var(--text); }
+li { margin-bottom: 0.4em; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 目录样式 */
+#TOC {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 2.5em;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+#TOC a { color: var(--accent); }
+
+/* 滚动条 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+::selection { background: rgba(88,166,255,0.25); color: var(--text-bright); }
+
+/* ===== 响应式 ===== */
+@media (max-width: 1100px) {
+  #sidebar { transform: translateX(-100%); }
+  #sidebar.open { transform: translateX(0); }
+  #main-content { margin-left: 0; }
+  .content-wrapper { padding: 30px 24px; padding-top: 70px; }
+  #nav-toggle { display: flex; }
+  #nav-overlay.show { display: block; }
+  h1 { font-size: 1.8em; color: #e74c3c; }
+  h2 { font-size: 1.4em; }
+}
+@media (max-width: 600px) {
+  .content-wrapper { padding: 20px 16px; padding-top: 70px; }
+  h1 { font-size: 1.5em; color: #e74c3c; }
+  h2 { font-size: 1.25em; }
+  pre { padding: 14px; font-size: 12px; }
+  table { font-size: 12.5px; }
+  th,td { padding: 8px 10px; }
+}
+</style>
+<script>
+(function() {
+  'use strict';
+  function toggleNav() {
+    var s = document.getElementById('sidebar');
+    var o = document.getElementById('nav-overlay');
+    if (s) s.classList.toggle('open');
+    if (o) o.classList.toggle('show');
+  }
+  function smoothScrollTo(target, duration) {
+    duration = duration || 600;
+    var start = window.pageYOffset || document.documentElement.scrollTop;
+    var end = target.getBoundingClientRect().top + start - 40;
+    var distance = end - start;
+    var startTime = null;
+    function easeInOutQuad(t, b, c, d) {
+      t /= d / 2;
+      if (t < 1) return c / 2 * t * t + b;
+      t--;
+      return -c / 2 * (t * (t - 2) - 1) + b;
+    }
+    function animation(currentTime) {
+      if (startTime === null) startTime = currentTime;
+      var timeElapsed = currentTime - startTime;
+      var run = easeInOutQuad(timeElapsed, start, distance, duration);
+      window.scrollTo(0, run);
+      if (timeElapsed < duration) requestAnimationFrame(animation);
+    }
+    requestAnimationFrame(animation);
+  }
+  function handleNavClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var target = this.getAttribute('data-target');
+    var el = null;
+    if (target === 'top') {
+      el = document.querySelector('h1');
+    } else {
+      el = document.querySelector('[data-anchor="' + target + '"]');
+    }
+    if (el) smoothScrollTo(el, 700);
+    if (window.innerWidth <= 1100) toggleNav();
+  }
+  function highlightNav() {
+    var sections = document.querySelectorAll('[data-anchor]');
+    var navLinks = document.querySelectorAll('.nav-link[data-target]');
+    var current = '';
+    var scrollPos = (window.pageYOffset || document.documentElement.scrollTop) + 120;
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].offsetTop <= scrollPos) {
+        current = sections[i].getAttribute('data-anchor');
+      }
+    }
+    for (var j = 0; j < navLinks.length; j++) {
+      navLinks[j].classList.remove('active');
+      if (navLinks[j].getAttribute('data-target') === current) {
+        navLinks[j].classList.add('active');
+      }
+    }
+  }
+  function init() {
+    var links = document.querySelectorAll('.nav-link[data-target]');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', handleNavClick);
+    }
+    window.addEventListener('scroll', highlightNav);
+    highlightNav();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script><base target="_blank">
+<base target="_blank">
+</head>
+<body>
+<!-- 左侧导航栏 -->
+<nav id="sidebar">
+  <div class="nav-brand">
+    <div class="nav-brand-icon">🐧</div>
+    <div class="nav-brand-text">
+      <div class="nav-brand-title">Linux Namespace</div>
+      <div class="nav-brand-sub">6大隔离机制</div>
+    </div>
+  </div>
+  <div class="nav-divider"></div>
+  <ul class="nav-list">
+    <li class="nav-item nav-home">
+      <div class="nav-link" data-target="top">
+        <span class="nav-icon">📖</span>
+        <span class="nav-text">总览</span>
+      </div>
+    </li>
+    <li class="nav-item">
+      <div class="nav-link" data-target="uts">
+        <span class="nav-num">01</span>
+        <span class="nav-text">UTS Namespace</span>
+        <span class="nav-tag">hostname</span>
+      </div>
+    </li>
+    <li class="nav-item">
+      <div class="nav-link" data-target="pid">
+        <span class="nav-num">02</span>
+        <span class="nav-text">PID Namespace</span>
+        <span class="nav-tag">进程隔离</span>
+      </div>
+    </li>
+    <li class="nav-item">
+      <div class="nav-link" data-target="network">
+        <span class="nav-num">03</span>
+        <span class="nav-text">Network</span>
+        <span class="nav-tag">网络隔离</span>
+      </div>
+    </li>
+    <li class="nav-item">
+      <div class="nav-link" data-target="mount">
+        <span class="nav-num">04</span>
+        <span class="nav-text">Mount</span>
+        <span class="nav-tag">挂载隔离</span>
+      </div>
+    </li>
+    <li class="nav-item">
+      <div class="nav-link" data-target="ipc">
+        <span class="nav-num">05</span>
+        <span class="nav-text">IPC Namespace</span>
+        <span class="nav-tag">通信隔离</span>
+      </div>
+    </li>
+    <li class="nav-item">
+      <div class="nav-link" data-target="user">
+        <span class="nav-num">06</span>
+        <span class="nav-text">USER Namespace</span>
+        <span class="nav-tag">用户隔离</span>
+      </div>
+    </li>
+    <li class="nav-item nav-home">
+      <div class="nav-link" data-target="summary">
+        <span class="nav-icon">🏗️</span>
+        <span class="nav-text">六面墙总结</span>
+      </div>
+    </li>
+    <li class="nav-item nav-home">
+      <div class="nav-link" data-target="experiment">
+        <span class="nav-icon">🧪</span>
+        <span class="nav-text">组合实验</span>
+      </div>
+    </li>
+  </ul>
+  <div class="nav-footer">
+    <div class="nav-footer-line">Linux Namespace</div>
+    <div class="nav-footer-line">6大隔离机制详解</div>
+  </div>
+</nav>
+
+<button id="nav-toggle" onclick="toggleNav()">☰</button>
+<div id="nav-overlay" onclick="toggleNav()"></div>
+
+<div id="main-content"><div class="content-wrapper">
+
+<h1
+id="最详细的-linux-namespace-6大隔离机制讲解万字详细讲解">最详细的
+Linux Namespace
+6大隔离机制讲解，万字详细讲解，包含讲解+图片，深度解析</h1>
+<h1 id="linux-namespace-6大机制">Linux Namespace 6大机制</h1>
+<table>
+<thead>
+<tr class="header">
+<th>英文全称</th>
+<th>中文名称</th>
+<th>简称</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PID Namespace</td>
+<td><strong>进程命名空间</strong></td>
+<td>PID 隔离</td>
+</tr>
+<tr class="even">
+<td>Network Namespace</td>
+<td><strong>网络命名空间</strong></td>
+<td>网络隔离</td>
+</tr>
+<tr class="odd">
+<td>Mount Namespace</td>
+<td><strong>挂载命名空间</strong></td>
+<td>挂载隔离</td>
+</tr>
+<tr class="even">
+<td>UTS Namespace</td>
+<td><strong>主机名命名空间</strong></td>
+<td>UTS 隔离</td>
+</tr>
+<tr class="odd">
+<td>IPC Namespace</td>
+<td><strong>进程间通信命名空间</strong></td>
+<td>IPC 隔离</td>
+</tr>
+<tr class="even">
+<td>User Namespace</td>
+<td><strong>用户命名空间</strong></td>
+<td>用户隔离</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Namespace 到底隔离了什么？容器？为什么要隔离？</p>
+<p>如果你也想搞懂容器到底怎么隔离的，或者说正在学习云原生安全领域的知识，这篇文章可以提供原理和实验讲解</p>
+</blockquote>
+<hr />
+<h2 id="阅前了解">阅前了解</h2>
+<p>容器不是虚拟机。这句话被说烂了，但我一开始也没理解它的重量。</p>
+<p>虚拟机的隔离是硬件级的——Hypervisor 切的是
+CPU、内存、IO，每台虚拟机以为自己独占一台物理机。容器的隔离是内核级的——所有容器共享同一个内核，内核用
+Namespace 给每个容器画了一道边界。</p>
+<p><strong>Namespace 不是墙，是视角。</strong> 同一个进程，在不同
+Namespace
+里看到的世界完全不同。内核没有复制进程，没有复制文件系统，它只是给进程换了一副眼镜，容器需要这个机制</p>
+<p>这副眼镜有六片镜片：UTS、PID、Network、Mount、IPC、USER。本文讲我怎么看这六片镜片，以及怎么亲手验证它们。</p>
+<p><strong>实验环境</strong>：Debian 13 (trixie)，内核
+6.12.94+。所有命令在隔离测试环境中执行，不要在生产服务器上跑，最好是x86系统，每一个人的环境不同，实验步骤可能会错误</p>
+<p><strong>需要安装的工具包</strong>：<code>util-linux</code>（提供
+<code>unshare</code>）、<code>iproute2</code>（提供
+<code>ip</code>）、<code>procps</code>（提供
+<code>ps</code>）、<code>coreutils</code>（提供
+<code>ipcmk</code>/<code>ipcs</code>）。Debian
+默认应该下载了，如果出现问题可以检查这些工具是否存在。</p>
+<hr />
+<h2 id="namespace-是怎么被创建和销毁的">0. Namespace
+是怎么被创建和销毁的</h2>
+<p>内核管理 Namespace 只有三个入口：</p>
+<table>
+<thead>
+<tr class="header">
+<th>机制</th>
+<th>作用</th>
+<th>场景</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>fork()</code></td>
+<td>子进程继承父进程的 Namespace</td>
+<td>容器内启动新进程</td>
+</tr>
+<tr class="even">
+<td><code>unshare()</code></td>
+<td>当前进程创建新 Namespace 并加入</td>
+<td><code>unshare --pid</code> 实验</td>
+</tr>
+<tr class="odd">
+<td><code>setns()</code></td>
+<td>当前进程加入已有 Namespace</td>
+<td><code>docker exec</code> 进入容器</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一个容易踩的坑</strong>：<code>setns()</code> 进入 Mount
+Namespace 后，之前打开的文件描述符仍然指向旧 Namespace
+的文件系统对象。Namespace 切换了，但 fd 没跟着换。</p>
+<p><strong>验证方法</strong>：看 <code>/proc/[pid]/ns/</code>
+下的符号链接，同一 Namespace 内的所有进程，inode 号相同。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看当前进程的 Namespace</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-la</span> /proc/self/ns/</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: uts:[4026531838]  pid:[4026531836]  .</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">..</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 启动一个后台进程</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sleep</span> 1000 <span class="kw">&amp;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="va">BG_PID</span><span class="op">=</span><span class="va">$!</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 验证两个进程是否在同一个 PID Namespace</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-li</span> /proc/self/ns/pid /proc/<span class="va">$BG_PID</span>/ns/pid</span></code></pre></div>
+<p>Namespace 的销毁采用引用计数。当最后一个进程退出或 <code>setns</code>
+离开只是进程不再属于该
+Namespace，真正销毁需要引用计数归零——没有进程属于它，也没有挂载点等外部引用。这就是容器进程全部退出后
+Namespace 自动清理的底层原理。</p>
+<hr />
+<h2 id="一uts-namespacehostname-的独立副本" data-anchor="uts">一、UTS Namespace：hostname
+的独立副本</h2>
+<h3 id="一句话理解">1.1 一句话理解</h3>
+<p>UTS Namespace 给每个容器分配了一块独立的空间，存自己的
+hostname。各改各的，互不干扰。</p>
+<p>内核实现上，这是真正的<strong>独立数据结构</strong>——每个 UTS
+Namespace 有自己的 <code>struct uts_namespace</code>，存 hostname 和 NIS
+domain。不是过滤视图，是独立变量。</p>
+<pre><code>宿主机 UTS ns：hostname = &quot;debian-host&quot;
+LQ1 UTS ns：  hostname = &quot;container-a&quot;  ← 独立变量
+LQ2 UTS ns：  hostname = &quot;container-b&quot;  ← 独立变量</code></pre>
+<h3 id="动手实验">1.2 动手实验</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 终端1：查看当前 hostname</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hostname</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: debian-host</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建新的 UTS Namespace（不需要 sudo！）</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">unshare</span> <span class="at">--uts</span> /bin/bash</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 在新 Namespace 里修改</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hostname</span> LQ1-uts</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">hostname</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: LQ1-uts</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 终端2（宿主机）：hostname 不变</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">hostname</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: debian-host</span></span></code></pre></div>
+<h3 id="验证隔离边界">1.3 验证隔离边界</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 在 LQ1 内</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /proc/sys/kernel/hostname</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: LQ1-uts</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 在宿主机</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /proc/sys/kernel/hostname</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: debian-host</span></span></code></pre></div>
+<p>同一个文件路径，不同 Namespace 返回不同值。内核根据当前进程的 UTS
+Namespace 指针，返回对应的数据结构。</p>
+<h3 id="与-docker-的关联">1.4 与 Docker 的关联</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Docker 默认独立 UTS Namespace</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> ubuntu:22.04 hostname</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 随机字符串，如：a1b2c3d4e5f6</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 共享宿主机 UTS（危险：容器改 hostname 会影响宿主机）</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">--uts</span><span class="op">=</span>host ubuntu:22.04 hostname</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: debian-host</span></span></code></pre></div>
+<p><strong>⚠️ 生产环境严禁 <code>--uts=host</code></strong>。容器内
+<code>hostname</code> 修改会直接影响宿主机。</p>
+<h3 id="小结">1.5 小结</h3>
+<table>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>隔离内容</td>
+<td>hostname、NIS domain</td>
+</tr>
+<tr class="even">
+<td>隔离方式</td>
+<td><strong>独立数据结构</strong>（<code>struct uts_namespace</code>
+独立分配）</td>
+</tr>
+<tr class="odd">
+<td>是否需要 root</td>
+<td>否</td>
+</tr>
+<tr class="even">
+<td>Docker 默认</td>
+<td>✅ 独立</td>
+</tr>
+<tr class="odd">
+<td>危险参数</td>
+<td><code>--uts=host</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>金句</strong>：UTS 是内核给容器画了一块独立空间放
+hostname。最简单，也最真实——因为它真的复制了一份数据。</p>
+</blockquote>
+<hr />
+<h2 id="二pid-namespace进程表的视角魔术" data-anchor="pid">二、PID
+Namespace：进程表的视角魔术</h2>
+<h3 id="一句话理解-1">2.1 一句话理解</h3>
+<p>PID Namespace 不复制进程，只复制进程表的视角。内核维护独立的 PID
+分配空间，让容器拥有一张”本地进程表”的错觉。</p>
+<p>技术本质：内核为每个 PID Namespace 维护独立的
+<code>struct pid_namespace</code>，包含独立的 PID 分配器。同一进程在不同
+Namespace 中有不同的 PID 编号。内核通过 <code>struct pid</code> 中的
+<code>level</code> 和 <code>numbers[]</code> 数组管理跨 Namespace 的 PID
+映射。</p>
+<h3 id="为什么需要这层隔离">2.2 为什么需要这层隔离</h3>
+<p>容器本质上就是宿主机上的一组普通进程。内核里有一张全局进程表，所有进程都在上面。如果没有
+PID Namespace，容器里的 <code>ps</code> 一查，直接看到全局表——宿主机的
+sshd、systemd、其他容器的进程，全暴露在视野里。</p>
+<p>PID Namespace 给容器伪造了一张”本地进程表”。<strong>容器查的是
+Namespace
+内的本地视图，宿主机查的是全局视图——底层是同一个进程，但编号体系独立。</strong></p>
+<h3 id="双重视角同一进程两个世界">2.3 双重视角：同一进程，两个世界</h3>
+<p>假设 LQ1 容器正在运行，容器内的 bash 进程同时存在于两个视角中：</p>
+<p><strong>LQ1 内部视角（<code>ps aux</code>）：</strong></p>
+<pre><code>USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0   4628  3840 pts/0    Ss   16:20   0:00 bash
+root         8  0.0  0.0   8900  5120 pts/0    R+   16:21   0:00 ps aux</code></pre>
+<ul>
+<li>PID 1 是你的 bash，你觉得这是整个世界</li>
+<li>你看不到宿主机的 systemd、sshd</li>
+<li>你看不到其他容器的进程</li>
+</ul>
+<p><strong>宿主机视角（<code>ps aux | grep bash</code>）：</strong></p>
+<pre><code>USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2847  0.0  0.0   4628  3840 ?        Ss   16:20   0:00 bash</code></pre>
+<ul>
+<li>同一个 bash 进程，在宿主机上是 PID 2847</li>
+<li>宿主机能看到全局进程表，包括 LQ1 的 bash、LQ2 的
+bash、systemd、sshd</li>
+<li>宿主机知道 LQ1 里的 “PID 1” 其实是全局的 PID 2847</li>
+</ul>
+<p><strong>各看各的，底层同一个事实。</strong></p>
+<h3 id="真正的隔离需要什么">2.4 真正的隔离需要什么</h3>
+<p>PID Namespace 切分了进程编号的命名空间，但 <code>ps</code>
+命令实际读的是 <code>/proc</code> 文件系统——这是窗户。</p>
+<ul>
+<li>如果 <code>/proc</code> 还是宿主机的全局 proc →
+容器透过窗户看到了外面的世界</li>
+<li>如果 <code>/proc</code> 被重新挂载为当前 Namespace 的本地 proc →
+窗户封死，只能看到楼里</li>
+</ul>
+<p><code>--mount-proc</code> 就是封窗户的动作。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>配置</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>独立 PID Namespace + 重新挂载 proc</td>
+<td>各开一栋楼，完全隔离</td>
+</tr>
+<tr class="even">
+<td>独立 PID Namespace，忘记挂载 proc</td>
+<td>楼分开了，窗户没封，<code>ps</code> 还能看到外面</td>
+</tr>
+<tr class="odd">
+<td>多个容器共享同一个 PID Namespace</td>
+<td>同一栋楼，楼道互通，互相杀伤</td>
+</tr>
+</tbody>
+</table>
+<p>即使 Namespace 和 proc 都配好了，如果容器拿到了
+<code>CAP_SYS_PTRACE</code>
+权限，攻击者仍然可能突破操作隔离。<strong>PID Namespace
+隔离的是”视图”，操作权限还需要 Capabilities 和 seccomp
+来限制。</strong></p>
+<h3 id="pid-1-的特殊语义">2.5 PID 1 的特殊语义</h3>
+<p>PID Namespace 里的 PID 1 不是普通进程，内核赋予了它三个特殊语义：</p>
+<ol type="1">
+<li><strong>信号忽略</strong>：未显式设置处理函数的信号默认被忽略（普通进程默认终止）</li>
+<li><strong>孤儿收养</strong>：父进程先于子进程退出时，孤儿进程被 PID 1
+收养</li>
+<li><strong>Namespace 锚点</strong>：PID 1 退出 → 内核发送 SIGKILL 给
+Namespace 内所有进程 → Namespace 销毁</li>
+</ol>
+<p><strong>容器安全关联</strong>： - Docker 默认把容器入口进程作为 PID 1
+- 如果 PID 1 是 <code>bash</code>，收到 SIGTERM 不会优雅退出（因为 bash
+没处理 SIGTERM），导致 <code>docker stop</code> 超时后强制 SIGKILL -
+攻击者如果能成为 PID 1，就能控制整个 Namespace 的生命周期</p>
+<p><strong>实验验证</strong>：</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 容器内，PID 1 是 bash</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-it</span> <span class="at">--rm</span> <span class="at">--name</span> test-init ubuntu:22.04 bash</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 在容器内</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">kill</span> <span class="at">-TERM</span> 1</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># bash 不会被终止！（因为未处理 SIGTERM，默认忽略）</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 换成 init 系统</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-it</span> <span class="at">--rm</span> <span class="at">--init</span> ubuntu:22.04 bash</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># --init 会插入 tini 作为 PID 1，bash 变成 PID 2</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># tini 会正确处理信号，容器能优雅退出</span></span></code></pre></div>
+<h3 id="实验lq1-和-lq2-共享一个-pid-namespace">2.6 实验：LQ1 和 LQ2
+共享一个 PID Namespace</h3>
+<p><strong>实验目的</strong>：验证”同一个 PID Namespace
+内的进程互相可见，但看不到宿主机进程”。</p>
+<p><strong>步骤 1：创建 LQ1</strong></p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-it</span> <span class="at">--name</span> LQ1 <span class="at">--rm</span> ubuntu:22.04 bash</span></code></pre></div>
+<p>在 LQ1 内执行 <code>ps aux</code>，预期：只能看到 LQ1 内的进程，PID 1
+是 bash。</p>
+<p><strong>步骤 2：创建 LQ2，共享 LQ1 的 PID Namespace</strong></p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 在另一个终端执行，确保 LQ1 已启动</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-it</span> <span class="at">--name</span> LQ2 <span class="at">--pid</span><span class="op">=</span>container:LQ1 <span class="at">--rm</span> ubuntu:22.04 bash</span></code></pre></div>
+<p>在 LQ2 内执行 <code>ps aux</code>，预期：能看到 LQ1 和 LQ2
+的所有进程。LQ1 的 bash 是 PID 1，LQ2 的 bash 是另一个
+PID。<strong>两个容器在同一栋楼，楼道互通。</strong></p>
+<p><strong>步骤 3：在 LQ2 中向 LQ1 的进程发信号</strong></p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">kill</span> <span class="at">-9</span> 1  <span class="co"># 仅在容器内执行！</span></span></code></pre></div>
+<p>预期：LQ1 容器被强制终止。<strong>同一栋楼，互相杀伤。</strong></p>
+<p><strong>步骤 4：验证看不到宿主机进程</strong></p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ps</span> aux <span class="kw">|</span> <span class="fu">grep</span> systemd</span></code></pre></div>
+<p>预期：看不到宿主机的 systemd 进程。<strong>Namespace
+隔离了外面的视野，但同一 Namespace 内的进程互相透明。</strong></p>
+<p><strong>步骤 5：清理</strong></p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> stop LQ1 LQ2</span></code></pre></div>
+<h3 id="踩坑记录我漏了---mount-proc">2.7 踩坑记录：我漏了
+<code>--mount-proc</code></h3>
+<p>第一次跑 PID Namespace 实验时，我自信地敲了：</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--pid</span> <span class="at">--fork</span> /bin/bash</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ps</span> aux</span></code></pre></div>
+<p>结果 <code>ps</code>
+仍然列出了宿主机的所有进程——sshd、systemd、其他容器的 bash，全在。</p>
+<p>** Namespace 不是隔离了吗？</p>
+<p>排查了十分钟，才发现 <code>/proc</code> 还是宿主机的全局 proc。PID
+Namespace 切分了进程编号空间，但 <code>ps</code> 读的是
+<code>/proc</code> 里的文件——<strong>窗户没封</strong>。</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 错误：只切了 Namespace，没换 proc</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--pid</span> <span class="at">--fork</span> /bin/bash</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ps</span> aux</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 仍然看到宿主机所有进程（窗户没封）</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 正确：切 Namespace + 重新挂载 proc</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--pid</span> <span class="at">--fork</span> <span class="at">--mount-proc</span> /bin/bash</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ps</span> aux</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: PID 1 是 bash，只有 Namespace 内的进程</span></span></code></pre></div>
+<p><strong>教训</strong>：PID Namespace
+隔离的是”编号空间”，<code>/proc</code>
+是另一回事。两者必须同时配，缺一不可。</p>
+<h3 id="常见错误排查">2.8 常见错误排查</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>unshare --pid</code> 后 <code>ps</code> 仍显示宿主机进程</td>
+<td>未 <code>--mount-proc</code></td>
+<td>加 <code>--mount-proc</code> 或手动
+<code>mount -t proc proc /proc</code></td>
+</tr>
+<tr class="even">
+<td><code>unshare --pid</code> 报错 Operation not permitted</td>
+<td>非 root 用户且无 CAP_SYS_ADMIN</td>
+<td>用 sudo 或检查 capabilities</td>
+</tr>
+<tr class="odd">
+<td>共享 PID Namespace 后看不到对方进程</td>
+<td>容器实际未共享</td>
+<td>确认 <code>--pid=container:xxx</code> 参数正确</td>
+</tr>
+</tbody>
+</table>
+<h3 id="实验结论">2.9 实验结论</h3>
+<table>
+<thead>
+<tr class="header">
+<th>场景</th>
+<th>能否看到对方进程</th>
+<th>能否操作对方进程</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>独立 PID Namespace（默认）</td>
+<td>❌</td>
+<td>❌（受 capabilities 限制）</td>
+</tr>
+<tr class="even">
+<td>共享 PID Namespace</td>
+<td>✅</td>
+<td>✅（同一空间内无额外隔离）</td>
+</tr>
+<tr class="odd">
+<td>宿主机进程</td>
+<td>❌</td>
+<td>❌（视图隔离生效）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="小结-1">2.10 小结</h3>
+<table>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>隔离内容</td>
+<td>进程编号</td>
+</tr>
+<tr class="even">
+<td>隔离方式</td>
+<td><strong>视图隔离</strong>（独立的 PID 分配空间）</td>
+</tr>
+<tr class="odd">
+<td>是否需要 root</td>
+<td>创建需 root</td>
+</tr>
+<tr class="even">
+<td>Docker 默认</td>
+<td>✅ 独立</td>
+</tr>
+<tr class="odd">
+<td>危险参数</td>
+<td><code>--pid=host</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>金句</strong>：PID Namespace 维护独立的 PID
+分配空间，让容器拥有”本地进程表”。同一 Namespace 内的进程互相透明，不同
+Namespace 之间的进程互相隔离——但隔离的是”视图”，操作权限还需
+Capabilities 限制。</p>
+</blockquote>
+<hr />
+<h2 id="三network-namespace独立的网络协议栈" data-anchor="network">三、Network
+Namespace：独立的网络协议栈</h2>
+<h3 id="一句话理解-2">3.1 一句话理解</h3>
+<p>Network Namespace
+给每个进程分配了一套独立的网络协议栈——独立的网卡、路由表、防火墙规则、socket
+哈希表。刚创建时是”毛坯房”：只有
+<code>lo</code>，其他什么都没有，也连不上网。</p>
+<p>技术本质：内核维护独立的 <code>struct net</code>
+实例。容器之间的通信靠 <strong>veth 虚拟网卡对</strong> 和 <strong>Linux
+Bridge 网桥</strong> 实现。</p>
+<h3 id="核心组件">3.2 核心组件</h3>
+
+<pre><code>
+**veth pair**：一根虚拟网线，两头各一个虚拟网卡。A 和 B 直接通信，但只能连两个。
+
+**veth + br0**：把多个 veth 的一端统一插到 br0 网桥上，实现多容器互通。br0 同时是主机的虚拟网卡，可配 IP 当网关。
+
+&gt; Docker 默认 bridge 模式就是这套架构。
+
+### 3.3 完整路径：容器包怎么走到外网？
+
+以 LQ1（IP 10.0.0.1）ping 8.8.8.8 为例：
+</code></pre>
+<p>LQ1（10.0.0.1） → 查路由表（外网 → 交给网关 10.0.0.254） → veth0 →
+br0（10.0.0.254，网关） → 主机内核路由决策（外网 → 走 eth0） → IP
+转发开关（net.ipv4.ip_forward=1） → iptables NAT（MASQUERADE，换公网
+IP） → eth0 → 路由器 → 外网（8.8.8.8）</p>
+<pre><code>
+三层路由关系：
+
+| 层级 | 谁的路由表 | 决定什么 |
+|-----|-----------|---------|
+| 网络空间层 | LQ1/LQ2 各自 | &quot;我的包先交给谁&quot; |
+| 二层（网桥） | br0 无路由表 | 纯 MAC 交换，不认 IP |
+| 主机层 | 主机全局 | &quot;包最终从哪张网卡出去&quot; |
+
+**核心**：br0 是&quot;传达室窗口&quot;（收包转交），真正做三层转发的是主机内核路由子系统 + IP 转发 + NAT。
+
+### 3.4 与 Docker 的关联
+
+```bash
+# 默认独立 Network Namespace
+docker run --rm ubuntu:22.04 ip link
+# 预期输出: 只有 lo
+
+# --network host：直接使用宿主机网络栈（高危）
+docker run --rm --network host ubuntu:22.04 ip link
+# 预期输出: 显示宿主机所有网卡</code></pre>
+<p><strong>⚠️ <code>--network host</code></strong>
+让容器绑定宿主机端口、抓包所有流量。</p>
+<h3 id="实验-aveth-直连">3.5 实验 A：veth 直连</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 创建两个 Network Namespace</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns add ns0</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns add ns1</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 创建 veth pair，两端分别插入</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link add veth0 type veth peer name veth1</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set veth0 netns ns0</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set veth1 netns ns1</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. 配置 IP 并启动</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns0 ip addr add 10.0.0.1/24 dev veth0</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns0 ip link set veth0 up</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns1 ip addr add 10.0.0.2/24 dev veth1</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns1 ip link set veth1 up</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 验证互通</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns0 ping 10.0.0.2</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 清理（注意：veth0 已在 ns0 中，需用 -n 指定命名空间）</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip <span class="at">-n</span> ns0 link del veth0</span></code></pre></div>
+<h3 id="实验-bveth-br0-nat-出网">3.6 实验 B：veth + br0 + NAT 出网</h3>
+<p>⚠️ <strong>实验前必读</strong>：会修改系统网络配置和
+iptables。请在隔离环境执行，结束后务必清理，然后一定要准备好手机，防止操作断网没招了</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 0. 确认物理网卡名称（将下文 eth0 替换为实际名称）</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ip</span> link show</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 创建 br0 网桥并配置网关</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link add br0 type bridge</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip addr add 10.0.0.254/24 dev br0</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set br0 up</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 创建 veth pair，一端插命名空间，一端插网桥</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link add veth0-ns0 type veth peer name veth0-br</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set veth0-ns0 netns ns0</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set veth0-br master br0</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set veth0-br up</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link add veth1-ns1 type veth peer name veth1-br</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set veth1-ns1 netns ns1</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set veth1-br master br0</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link set veth1-br up</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. 配置命名空间 IP</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns0 ip addr add 10.0.0.1/24 dev veth0-ns0</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns0 ip link set veth0-ns0 up</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns1 ip addr add 10.0.0.2/24 dev veth1-ns1</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns1 ip link set veth1-ns1 up</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 配置默认网关</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns0 ip route add default via 10.0.0.254</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns1 ip route add default via 10.0.0.254</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 开启 IP 转发 + NAT</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sysctl <span class="at">-w</span> net.ipv4.ip_forward=1</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> iptables <span class="at">-t</span> nat <span class="at">-A</span> POSTROUTING <span class="at">-s</span> 10.0.0.0/24 ! <span class="at">-o</span> br0 <span class="at">-j</span> MASQUERADE</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. 验证出网</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns exec ns0 ping 8.8.8.8</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. 抓包验证 NAT（eth0 替换为实际网卡名）</span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> tcpdump <span class="at">-i</span> eth0 icmp <span class="at">-n</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a><span class="co"># 另一终端：sudo ip netns exec ns0 ping 8.8.8.8</span></span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a><span class="co"># 8. 清理（务必执行！）</span></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> iptables <span class="at">-t</span> nat <span class="at">-D</span> POSTROUTING <span class="at">-s</span> 10.0.0.0/24 ! <span class="at">-o</span> br0 <span class="at">-j</span> MASQUERADE</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns del ns0</span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip netns del ns1</span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link del br0</span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link del veth0-br <span class="dv">2</span><span class="op">&gt;</span>/dev/null</span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link del veth1-br <span class="dv">2</span><span class="op">&gt;</span>/dev/null</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a><span class="ex">如果上面的还是删不了，执行</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> ip link show <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">&quot;veth.*br&quot;</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F:</span> <span class="st">&#39;{print $2}&#39;</span> <span class="kw">|</span> <span class="fu">xargs</span> <span class="at">-r</span> sudo ip link del</span></code></pre></div>
+<h3 id="踩坑记录忘了-ip_forward">3.7 踩坑记录：忘了
+<code>ip_forward</code></h3>
+<p>实验 B 跑完后，ns0 能 ping 通 ns1，但 ping 外网不通。</p>
+<p>排查链： - <code>ip route</code> 正常 ✓ -
+<code>iptables -t nat -L</code> 有 MASQUERADE 规则 ✓ -
+<code>ping 8.8.8.8</code> 没回包 ✗</p>
+<p>最后发现
+<code>net.ipv4.ip_forward=0</code>。主机默认只管自己的包，不管”别人的”。</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 错误：IP 转发未开启</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sysctl</span> net.ipv4.ip_forward</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: net.ipv4.ip_forward = 0</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ping 8.8.8.8 无回包</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 正确：开启转发</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sysctl <span class="at">-w</span> net.ipv4.ip_forward=1</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ping 8.8.8.8 正常</span></span></code></pre></div>
+<p><strong>教训</strong>：Network Namespace
+隔离了协议栈，但”出网”是主机的责任。IP
+转发是主机当”快递中转站”的许可证，不开就等于拒收。</p>
+<h3 id="常见错误排查-1">3.8 常见错误排查</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>现象</th>
+<th>原因</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ip link del veth0</code> 报错</td>
+<td>veth 已移到 ns 中</td>
+<td><code>ip -n ns0 link del veth0</code></td>
+</tr>
+<tr class="even">
+<td><code>ping 8.8.8.8</code> 不通</td>
+<td>IP 转发未开启</td>
+<td><code>sysctl -w net.ipv4.ip_forward=1</code></td>
+</tr>
+<tr class="odd">
+<td>外网不回包</td>
+<td>NAT 规则缺失</td>
+<td>检查 <code>iptables -t nat -L</code></td>
+</tr>
+<tr class="even">
+<td>tcpdump 报错接口不存在</td>
+<td>网卡名不是 eth0</td>
+<td><code>ip link show</code> 查看实际名称</td>
+</tr>
+</tbody>
+</table>
+<h3 id="从实验到生产docker-在背后做了什么">3.9 从实验到生产：Docker
+在背后做了什么？</h3>
+<table>
+<thead>
+<tr class="header">
+<th>你手动做的</th>
+<th>Docker 自动做的</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ip netns add</code></td>
+<td>创建容器网络空间</td>
+</tr>
+<tr class="even">
+<td><code>ip link add veth...</code></td>
+<td>创建 veth，一头插容器，一头插 docker0</td>
+</tr>
+<tr class="odd">
+<td><code>ip addr add</code></td>
+<td>分配 IP（来自 docker0 子网）</td>
+</tr>
+<tr class="even">
+<td><code>ip route add default</code></td>
+<td>设置默认网关为 docker0 IP</td>
+</tr>
+<tr class="odd">
+<td><code>iptables -t nat ...</code></td>
+<td>自动配置 MASQUERADE</td>
+</tr>
+</tbody>
+</table>
+<p><strong>理解了这个实验，你就理解了 Docker 网络 80%
+的原理。</strong></p>
+<h3 id="小结-2">3.10 小结</h3>
+<table>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>隔离内容</td>
+<td>网卡、路由表、防火墙规则、端口</td>
+</tr>
+<tr class="even">
+<td>隔离方式</td>
+<td><strong>独立协议栈</strong>（独立的 <code>struct net</code>）</td>
+</tr>
+<tr class="odd">
+<td>是否需要 root</td>
+<td>创建需 root</td>
+</tr>
+<tr class="even">
+<td>Docker 默认</td>
+<td>✅ 独立（bridge 模式）</td>
+</tr>
+<tr class="odd">
+<td>危险参数</td>
+<td><code>--network host</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>金句</strong>：Network Namespace
+给每个进程发了一间独立的网络办公室。办公室之间靠 veth 网线连到 br0
+交换机，出网靠主机内核当快递中转站，NAT 换马甲。</p>
+</blockquote>
+<h2 id="四mount-namespace文件系统的挂载视图" data-anchor="mount">四、Mount
+Namespace：文件系统的挂载视图</h2>
+<h3 id="一句话理解-3">4.1 一句话理解</h3>
+<p>Mount Namespace
+让每个进程拥有自己的”挂载视图”（挂载表），视图独立但底层文件系统可能共享。容器在此基础上多了一步——不仅换视图，还换根目录（<code>pivot_root</code>）。</p>
+<p>技术本质：内核为每个 Mount Namespace
+维护独立的挂载树副本（<code>struct mnt_namespace</code>）。创建时复制当前挂载树，之后各自独立演化。但底层文件系统是共享还是独立，取决于挂载的是同一个设备还是不同设备。
+</p>
+<h3 id="目录是门文件系统是房间">4.2 目录是门，文件系统是房间</h3>
+<p><strong>目录本身不存储数据，它只是一扇门。</strong>
+门后面是什么房间，取决于你在这扇门上”挂载”了什么。</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 造一扇门</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> /mnt/door</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> /mnt/door</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: （空）</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 在门后挂一个房间</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /mnt/door</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;我在房间里&quot;</span> <span class="op">&gt;</span> /mnt/door/msg.txt</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /mnt/door/msg.txt</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 我在房间里</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 拆下房间，门又变空了</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="fu">umount</span> /mnt/door</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /mnt/door/msg.txt</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 报错：没有那个文件或目录</span></span></code></pre></div>
+<blockquote>
+<p><strong>文件系统必须挂载到目录上才能使用。目录是唯一的入口。</strong></p>
+</blockquote>
+<h3 id="什么是-mount-namespace">4.3 什么是 Mount Namespace</h3>
+<p>Linux 内核的 Mount Namespace
+让每个进程拥有自己的”房间清单”（挂载表），进程之间互相独立。</p>
+<p>同一个门 <code>/mnt/data</code>，进程 A 的清单上写着通向房间 X，进程
+B 的清单上可能写着通向房间 Y，或者什么都没写。</p>
+<p><strong>不是房间变了，是进程手里的清单不同。</strong></p>
+<p>创建新挂载视图时，内核会复制一份当前的房间清单给新视图。之后两边的清单各自更新，互不影响。</p>
+<blockquote>
+<p>⚠️ <strong>重要</strong>：Mount Namespace
+隔离的是”房间清单”（挂载表），不是房间里的文件内容。如果两个视图都挂载了同一个房间（比如都指向同一个硬盘分区），修改文件会互相看到。</p>
+</blockquote>
+<h3 id="三个视图实验">4.4 三个视图实验</h3>
+<p><strong>第一视图（宿主机）</strong>：所有进程共享同一份房间清单。</p>
+<p><strong>第二视图（独立清单）</strong>：</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--mount</span> <span class="at">--propagation</span> private /bin/bash</span></code></pre></div>
+<p>内核复制了一份房间清单给你。从此你的清单和宿主机的清单各自独立。</p>
+<blockquote>
+<p><code>--propagation private</code> 显式设置挂载传播为
+private，确保挂载事件不会穿透 Namespace
+边界。这是手写容器时最容易忽略的安全点。</p>
+</blockquote>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 你在第二视图</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> /mnt/room2</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /mnt/room2</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;第二视图的文件&quot;</span> <span class="op">&gt;</span> /mnt/room2/secret.txt</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 退出第二视图，回到第一视图</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 第一视图看不到</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> /mnt/room2</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: （空）</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="kw">|</span> <span class="fu">grep</span> room2</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: （无输出，确认隔离生效）</span></span></code></pre></div>
+<p><strong>第三视图（嵌套隔离）</strong>：在第二视图内部再复制一份清单。</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 在第二视图里</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--mount</span> <span class="at">--propagation</span> private /bin/bash</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> /mnt/room2/room3</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /mnt/room2/room3</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;第三视图的文件&quot;</span> <span class="op">&gt;</span> /mnt/room2/room3/deep.txt</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>查看内容</th>
+<th>第一视图</th>
+<th>第二视图</th>
+<th>第三视图</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/mnt/room2/secret.txt</code></td>
+<td>❌</td>
+<td>✅</td>
+<td>✅（复制时带过来的）</td>
+</tr>
+<tr class="even">
+<td><code>/mnt/room2/room3/deep.txt</code></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr class="odd">
+<td>修改 <code>/etc/hosts</code></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅（底层共享）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>规律</strong>：每多一个视图，就多一层清单隔离。外层看不到内层的新挂载，除非显式进入内层。</p>
+</blockquote>
+<h3 id="挂载传播为什么需要---propagation-private">4.5
+挂载传播：为什么需要 <code>--propagation private</code>？</h3>
+<p>Linux 挂载点有四种传播类型：</p>
+<table>
+<thead>
+<tr class="header">
+<th>传播类型</th>
+<th>行为</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>shared</strong></td>
+<td>挂载事件双向传播</td>
+<td>系统默认根挂载</td>
+</tr>
+<tr class="even">
+<td><strong>slave</strong></td>
+<td>挂载事件单向传播（只接收）</td>
+<td>某些容器场景</td>
+</tr>
+<tr class="odd">
+<td><strong>private</strong></td>
+<td>挂载事件不传播</td>
+<td>完全隔离的容器</td>
+</tr>
+<tr class="even">
+<td><strong>unbindable</strong></td>
+<td>不可绑定挂载</td>
+<td>防止递归挂载问题</td>
+</tr>
+</tbody>
+</table>
+<p><strong>为什么实验要加
+<code>--propagation private</code>？</strong></p>
+<p>因为宿主机的根目录 <code>/</code> 默认是 shared 传播。如果你在 Mount
+Namespace
+里挂载了新目录，这个事件会传播回宿主机——宿主机也会看到这个挂载！这就破坏了隔离。</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 错误示范（不加 --propagation private）</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--mount</span> /bin/bash</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /mnt/leak</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 宿主机也会看到 /mnt/leak！因为根挂载是 shared</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 正确示范</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--mount</span> <span class="at">--propagation</span> private /bin/bash</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /mnt/isolated</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 宿主机看不到，隔离生效</span></span></code></pre></div>
+<blockquote>
+<p><strong>Docker 的默认行为</strong>：Docker
+创建容器时会自动处理挂载传播，将容器的根设置为
+private，所以你不需要手动操心。但手写容器时必须注意这一点。</p>
+</blockquote>
+<h3 id="从视图到容器换根目录">4.6 从视图到容器：换根目录</h3>
+<p>前面的视图只隔离了清单，没换房间。第二视图、第三视图的根目录
+<code>/</code> 里的内容还是和第一视图一样。</p>
+<p><strong>容器需要</strong>：不仅清单独立，根目录 <code>/</code>
+也要换成新房间。</p>
+<p>容器内部三步： 1. 创建 Mount Namespace（第二视图，清单隔离） 2.
+挂载容器镜像文件系统（新房间） 3. 用 <code>pivot_root</code> 把根目录
+<code>/</code> 指向新房间（换根操作）</p>
+<pre><code>容器的文件系统隔离 = Mount Namespace（清单隔离）+ 新文件系统 + pivot_root（换根）</code></pre>
+<p><strong>pivot_root vs chroot</strong>： - <code>chroot</code>
+只是改当前进程的根目录，但 <code>cd ..</code> 可以逃逸 -
+<code>pivot_root</code> 修改 mount namespace 内调用进程的 rootfs，把当前
+rootfs 移到 <code>put_old</code> 目录，<code>new_root</code> 变成新的
+<code>/</code>。<code>cd ..</code>
+不会逃逸，因为当前工作目录已被重新解析到新的 rootfs 下</p>
+<table>
+<thead>
+<tr class="header">
+<th>攻击场景</th>
+<th>文件系统隔离机制（标准容器）</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>容器内读取宿主机 <code>/etc/shadow</code></td>
+<td>✅ 换根后看不到</td>
+</tr>
+<tr class="even">
+<td>容器内修改宿主机文件</td>
+<td>✅ 清单隔离保护</td>
+</tr>
+</tbody>
+</table>
+<h4 id="实验chroot-逃逸-vs-pivot_root-安全">实验：chroot 逃逸 vs
+pivot_root 安全</h4>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 创建 jail 目录和文件</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /tmp/jail/bin</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> /bin/bash /tmp/jail/bin/</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> /bin/ls /tmp/jail/bin/</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /tmp/jail/lib /tmp/jail/lib64</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 复制必要的动态库（略，实际需 ldd 检查）</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. chroot 逃逸演示</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chroot /tmp/jail /bin/bash</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 在 chroot 内</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> /</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 看到宿主机的根目录！chroot 只改了进程的根目录指针，没有隔离 mount namespace，当前工作目录的解析逻辑仍可逃逸</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. pivot_root 安全演示（需要 Mount Namespace）</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--mount</span> <span class="at">--propagation</span> private /bin/bash</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> /tmp/newroot /tmp/oldroot</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /tmp/newroot</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 在 newroot 里准备最小根文件系统...</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a><span class="ex">pivot_root</span> /tmp/newroot /tmp/oldroot</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> /tmp/oldroot</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 看到旧的根被挂到了 /tmp/oldroot，但 cd .. 不会逃逸</span></span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 因为整个 mount namespace 的 rootfs 已经切换</span></span></code></pre></div>
+<p><strong>关键区别</strong>：<code>chroot</code>
+只修改了当前进程的根目录指针，<code>pivot_root</code> 修改了整个 mount
+namespace 的根文件系统。<code>cd ..</code> 在 <code>pivot_root</code>
+后仍然指向新的根，不会逃逸。</p>
+<blockquote>
+<p><strong>注意</strong>：通过 volume
+显式挂载宿主机目录，容器可以访问。这是配置行为，不是隔离机制的绕过。</p>
+</blockquote>
+<h3 id="与-docker-的关联-1">4.7 与 Docker 的关联</h3>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Docker 默认独立 Mount Namespace</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> ubuntu:22.04 ls /</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 显示 Ubuntu 镜像的根目录</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 共享宿主机文件系统（危险）</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-v</span> /:/host ubuntu:22.04 ls /host</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 显示宿主机的根目录</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 只读挂载</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-v</span> /:/host:ro ubuntu:22.04 cat /host/etc/shadow</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 可以读取，但不能修改</span></span></code></pre></div>
+<p><strong>⚠️ 安全提示</strong>：<code>-v /:/host</code>
+这种挂载直接把宿主机根目录塞进容器，是容器逃逸的最短路径之一。</p>
+<h3 id="踩坑记录--propagation-private-不是默认的">4.8
+踩坑记录：<code>--propagation private</code> 不是默认的</h3>
+<p>第一次写 Mount Namespace 实验脚本时，我没加
+<code>--propagation private</code>：</p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--mount</span> /bin/bash</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /mnt/leak</span></code></pre></div>
+<p>然后在宿主机终端执行 <code>mount | grep leak</code>，居然看到了
+<code>/mnt/leak</code>！</p>
+<p><strong>为什么？</strong> 因为宿主机根目录 <code>/</code>
+的默认传播类型是 <code>shared</code>。Mount Namespace
+里的事件会穿透回宿主机。</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 错误：挂载事件泄漏到宿主机</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--mount</span> /bin/bash</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /mnt/leak</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 宿主机：mount | grep leak → 能看到！</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 正确：显式设置 private，切断传播</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--mount</span> <span class="at">--propagation</span> private /bin/bash</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mount</span> <span class="at">-t</span> tmpfs tmpfs /mnt/isolated</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 宿主机：mount | grep isolated → 看不到</span></span></code></pre></div>
+<p><strong>教训</strong>：手写容器时必须显式处理挂载传播。Docker
+自动做了这件事，但你自己写的时候不会自动发生。</p>
+<h3 id="小结-3">4.9 小结</h3>
+<table>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>隔离内容</td>
+<td>文件系统挂载点</td>
+</tr>
+<tr class="even">
+<td>隔离方式</td>
+<td><strong>挂载视图</strong>（复制挂载树）</td>
+</tr>
+<tr class="odd">
+<td>是否需要 root</td>
+<td>创建需 root</td>
+</tr>
+<tr class="even">
+<td>Docker 默认</td>
+<td>✅ 独立</td>
+</tr>
+<tr class="odd">
+<td>危险参数</td>
+<td><code>-v /:/host</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>金句</strong>：Mount Namespace
+让每个进程拥有自己的”房间清单”。容器比纯 Namespace
+多了一层：不仅”换清单”，还”换房间”。</p>
+</blockquote>
+<hr />
+<h2 id="五ipc-namespace全局表上的归属标签" data-anchor="ipc">五、IPC
+Namespace：全局表上的归属标签</h2>
+<h3 id="一句话理解-4">5.1 一句话理解</h3>
+<p>IPC Namespace 是<strong>逻辑隔离</strong>。内核在全局 IPC
+对象表上增加了一列”归属哪个 Namespace”，查找时按 Namespace
+过滤。容器内只能看到自己的过滤视图，宿主机 root 能看到所有 Namespace 的
+IPC 对象。</p>
+<p>技术本质：内核为每个 IPC Namespace 分配独立的
+<code>struct ipc_namespace</code>，包含独立的信号量数组、消息队列和共享内存段的管理结构。但这些数据结构物理上存在于内核全局空间中，内核通过
+<code>ipc_namespace</code> 指针区分归属。 </p>
+<h3 id="动手实验-1">5.2 动手实验</h3>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 步骤1：宿主机创建共享内存</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ipcmk</span> <span class="at">-M</span> 1024</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: Shared memory id: 0</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ipcs</span> <span class="at">-m</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: ------ Shared Memory Segments --------</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: key        shmid      owner      perms      bytes      nattch     status</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 0x00000000 0          root       644        1024       0</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 步骤2：创建新的 IPC Namespace</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unshare <span class="at">--ipc</span> /bin/bash</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 步骤3：在 Namespace 内查看共享内存</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="ex">ipcs</span> <span class="at">-m</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: （空！看不到宿主机的）</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 步骤4：在 Namespace 内创建新的共享内存</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="ex">ipcmk</span> <span class="at">-M</span> 512</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: Shared memory id: 0</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="ex">ipcs</span> <span class="at">-m</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: key        shmid      owner      perms      bytes      nattch     status</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 0x00000000 0          root       644        512        0</span></span></code></pre></div>
+<h3 id="验证隔离边界-1">5.3 验证隔离边界</h3>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 宿主机再看（另一个终端）</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ipcs</span> <span class="at">-m</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: ------ Shared Memory Segments --------</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: key        shmid      owner      perms      bytes      nattch     status</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 0x00000000 0          root       644        1024       0          ← 宿主机的</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 0x00000000 0          root       644        512        0          ← 容器的？！</span></span></code></pre></div>
+<p><strong>关键发现</strong>：<code>shmid</code> 是 Namespace
+内的本地编号。宿主机 root 通过 <code>/proc/sysvipc/shm</code>
+等接口能看到所有 Namespace 的 IPC 对象（因为内核全局表中包含 ns
+指针字段），但普通容器进程只能看到自己的过滤视图。</p>
+<h3 id="内核实现全局表-过滤条件">5.4 内核实现：全局表 + 过滤条件</h3>
+<p>IPC Namespace 的内核实现基于 <code>struct ipc_namespace</code>。每个
+IPC Namespace 拥有独立的 System V
+信号量数组、消息队列和共享内存段的管理结构。</p>
+<p>但这些数据结构<strong>不是物理隔离的</strong>——它们都存在于内核全局空间中，内核通过
+<code>ipc_namespace</code> 指针来区分归属：</p>
+<pre><code>内核全局 IPC 对象表（简化示意）：
+┌─────────────┬─────────────────────┬─────────────┐
+│ key         │ IPC ns 指针地址      │ 数据地址     │
+├─────────────┼─────────────────────┼─────────────┤
+│ &quot;nginx.stats&quot;│ 0xffff...a1b2（LQ1）│ 0xabc...    │
+│ &quot;nginx.stats&quot;│ 0xffff...c3d4（LQ2）│ 0xdef...    │
+└─────────────┴─────────────────────┴─────────────┘
+
+LQ1 查找 &quot;nginx.stats&quot;
+  └── 内核确认 LQ1 的 IPC ns 指针 = 0xffff...a1b2
+  └── 匹配 (key=&quot;nginx.stats&quot;, ns=0xffff...a1b2)
+  └── 返回 LQ1 的数据</code></pre>
+<h3 id="独立数据结构-vs-逻辑隔离">5.5 独立数据结构 vs 逻辑隔离</h3>
+<table>
+<thead>
+<tr class="header">
+<th>维度</th>
+<th>UTS Namespace</th>
+<th>IPC Namespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>隔离方式</strong></td>
+<td>独立数据结构</td>
+<td>全局表 + 过滤条件</td>
+</tr>
+<tr class="even">
+<td><strong>物理位置</strong></td>
+<td>容器独立空间</td>
+<td>宿主机内核共享</td>
+</tr>
+<tr class="odd">
+<td><strong>同名冲突</strong></td>
+<td>不存在（各自独立）</td>
+<td>存在但通过指针区分</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>为什么区分这两种隔离方式很重要？</strong></p>
+<p>因为这决定了突破隔离的方式不同： - UTS：没有”全局表”可以遍历，宿主机
+root 也无法直接看到所有 UTS Namespace 的内容 - IPC：宿主机 root
+可以通过内核接口遍历所有 IPC 对象，只是按 Namespace 过滤显示</p>
+</blockquote>
+<h3 id="与-docker-的关联-2">5.6 与 Docker 的关联</h3>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Docker 默认独立 IPC Namespace</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> ubuntu:22.04 ipcs <span class="at">-m</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: （空）</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 共享宿主机 IPC（危险）</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">--ipc</span><span class="op">=</span>host ubuntu:22.04 ipcs <span class="at">-m</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 显示宿主机的所有 IPC 对象</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 两个容器共享 IPC Namespace</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">--ipc</span><span class="op">=</span>container:LQ1 ubuntu:22.04 ipcs <span class="at">-m</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 显示 LQ1 的 IPC 对象</span></span></code></pre></div>
+<p><code>--ipc=host</code>
+会让容器直接访问宿主机的共享内存、消息队列、信号量，是容器逃逸的高危路径之一。</p>
+<h3 id="小结-4">5.7 小结</h3>
+<table>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>隔离内容</td>
+<td>共享内存、消息队列、信号量</td>
+</tr>
+<tr class="even">
+<td>隔离方式</td>
+<td><strong>逻辑隔离</strong>（全局表 + Namespace 指针过滤）</td>
+</tr>
+<tr class="odd">
+<td>是否需要 root</td>
+<td>创建需要</td>
+</tr>
+<tr class="even">
+<td>Docker 默认</td>
+<td>✅ 独立</td>
+</tr>
+<tr class="odd">
+<td>危险参数</td>
+<td><code>--ipc=host</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>金句</strong>：IPC 是内核在全局表上贴了个”属于谁”的标签，通过
+Namespace 指针区分归属。不是切空间，是贴标签。</p>
+</blockquote>
+<hr />
+<h2 id="六user-namespace身份翻译器" data-anchor="user">六、USER Namespace：身份翻译器</h2>
+<h3 id="一句话理解-5">6.1 一句话理解</h3>
+<p>USER Namespace
+是<strong>身份翻译器</strong>，不是权限提升工具。容器内看到的
+<code>root</code>（UID 0），在内核眼里是映射后的普通用户（如 UID
+1000）。内核始终用<strong>真实 UID</strong> 做权限检查。</p>
+<p>技术本质：USER Namespace 通过 <code>uid_map</code> 和
+<code>gid_map</code> 建立容器内外 UID/GID
+的映射关系。<code>struct user_namespace</code>
+是核心数据结构。映射在内核权限检查时实时转换。</p>
+
+<h3 id="两层视角">6.2 两层视角</h3>
+<p>容器内进程看到的自己，和内核看到的它，是两个完全不同的身份：</p>
+<table>
+<thead>
+<tr class="header">
+<th>视角</th>
+<th>看到的身份</th>
+<th>实际权限</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>容器内</td>
+<td><code>root</code>（UID 0）</td>
+<td>以为自己有最高权限</td>
+</tr>
+<tr class="even">
+<td>宿主机内核</td>
+<td>普通用户（如 UID 1000）</td>
+<td>按普通用户做权限检查</td>
+</tr>
+</tbody>
+</table>
+<p>内核始终用<strong>真实 UID</strong> 执行权限判定，容器内的 root
+只是<strong>映射后的身份</strong>。</p>
+<h3 id="动手实验普通用户即可">6.3 动手实验（普通用户即可！）</h3>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 关键：USER Namespace 不需要 sudo！</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 前置检查：确保内核允许非特权 USER Namespace</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sysctl</span> kernel.unprivileged_userns_clone</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 应输出 1。如果输出 0，执行：</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># sudo sysctl -w kernel.unprivileged_userns_clone=1</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="ex">unshare</span> <span class="at">--user</span> <span class="at">--map-root-user</span> <span class="at">--fork</span> /bin/bash</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 容器内视角</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="fu">whoami</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co"># =&gt; root</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="fu">id</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co"># =&gt; uid=0(root) gid=0(root) groups=0(root)</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建文件</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> /tmp/userns-test.txt</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> /tmp/userns-test.txt</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="co"># =&gt; -rw-r--r-- 1 root root ...（容器内看是 root）</span></span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 宿主机视角（另一个终端）</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ps</span> aux <span class="kw">|</span> <span class="fu">grep</span> bash</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 1000     2847  ...  /bin/bash  （实际 UID 1000）</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> /tmp/userns-test.txt</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: -rw-r--r-- 1 1000 1000 ...（宿主机看是 UID 1000）</span></span></code></pre></div>
+<h3 id="验证隔离边界映射表">6.4 验证隔离边界：映射表</h3>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 在容器内查看映射</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /proc/self/uid_map</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 0       1000          1</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 格式：容器内UID  宿主机UID  映射范围</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 解读：容器内的 UID 0 → 宿主机的 UID 1000</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co">#      映射范围 1，表示只映射了 1 个 UID</span></span></code></pre></div>
+<h4
+id="为什么映射表需要外面的人来写">为什么映射表需要”外面的人”来写？</h4>
+<p>这是 USER Namespace 最核心的安全设计：<strong>只有 Namespace 外的
+root 才能给 Namespace 内的 root 发面具。</strong></p>
+<pre><code>父进程（宿主机，UID 0）
+  ├── fork() → 子进程
+  │
+  ├── unshare(CLONE_NEWUSER) → 子进程进入新 USER Namespace
+  │   └── 子进程在新 NS 内是 UID 0（但内核知道它是&quot;假的&quot;）
+  │
+  └── 父进程写 /proc/[子进程pid]/uid_map
+      └── &quot;0 1000 1&quot; → 容器内 UID 0 映射到宿主机 UID 1000</code></pre>
+<p><strong>如果容器自己能写 <code>uid_map</code></strong>，它就可以写
+<code>"0 0 1"</code>（映射到宿主机 root），面具就成真了。</p>
+<p>内核的设计是： - 创建 USER Namespace 的进程，在新 Namespace
+内获得所有 capabilities - 但写 <code>uid_map</code>
+的权限在<strong>父进程</strong>手里（父进程在旧 Namespace 中） -
+父进程通常是容器运行时（runc/dockerd），由系统管理员控制</p>
+<blockquote>
+<p>这就是为什么 Docker 默认不启用 USER
+Namespace：启用后需要处理镜像文件权限（镜像内文件所有者 UID 0
+映射后可能无法读取），兼容性成本高。</p>
+</blockquote>
+<h3 id="安全价值逃逸了也是普通人">6.5 安全价值：逃逸了也是普通人</h3>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 模拟逃逸：在容器内尝试读取宿主机 /etc/shadow</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /etc/shadow</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: cat: /etc/shadow: Permission denied</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 为什么？因为内核看到的是 UID 1000，不是 root</span></span></code></pre></div>
+<p><strong>核心结论</strong>：即使容器进程通过某种方式回到了宿主机 PID
+Namespace（逃逸），内核记住的是它的<strong>真实 UID 1000</strong>，不是
+root。对 <code>/etc/shadow</code> 没权限，创建的文件所有者也是 UID
+1000。</p>
+<blockquote>
+<p><strong>但注意</strong>：如果容器通过 volume
+挂载了宿主机目录，且该目录对映射后的 UID
+可写，容器仍然可以修改宿主机文件。USER Namespace
+防的是”权限提升”，不是”文件访问”。</p>
+</blockquote>
+<h3 id="危险配置警告">6.6 ⚠️ 危险配置警告</h3>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 以下配置是危险的：把容器 root 映射到宿主机 root</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;0 0 1&quot;</span> <span class="op">&gt;</span> /proc/self/uid_map  <span class="co"># 容器内 UID 0 → 宿主机 UID 0</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Docker 默认不会这样做，但某些&quot;特权容器&quot;场景可能接近这个效果</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">--privileged</span> ubuntu:22.04 id</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: uid=0(root) gid=0(root)  ← 这是真正的 root！</span></span></code></pre></div>
+<p><strong><code>--privileged</code> 和 USER Namespace
+是两种互斥的安全模型</strong>： -
+<code>--privileged</code>：容器内是真正的 root，没有 USER Namespace 保护
+- USER Namespace：容器内是”映射 root”，逃逸无危害</p>
+<blockquote>
+<p>注意：技术上 <code>--privileged</code> 和 <code>--userns-remap</code>
+可以同时指定，但结果混乱且危险，应避免。</p>
+</blockquote>
+<h3 id="为什么-docker-默认不开-user-namespace">6.7 为什么 Docker
+默认不开 USER Namespace？</h3>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查 Docker 是否启用 USER Namespace</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> info <span class="kw">|</span> <span class="fu">grep</span> userns</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 通常为空，表示未启用</span></span></code></pre></div>
+<p>原因：<strong>文件系统权限冲突</strong>。</p>
+<p>如果镜像里的文件所有者是 root（UID 0），而容器 root 映射到 UID
+100000，那容器内读取这些文件时，内核检查的是 UID 100000
+的权限——大概率没有读权限。</p>
+<p>解决方案： - 方案A：镜像构建时把所有文件改为非 root 拥有（最佳实践）
+- 方案B：Docker 启用
+<code>--userns-remap=default</code>，自动映射到一个子 UID 范围</p>
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 启用 USER Namespace（需修改 /etc/docker/daemon.json）</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;userns-remap&quot;</span><span class="ex">:</span> <span class="st">&quot;default&quot;</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<h3 id="容器内创造uid-的真相">6.8 容器内”创造”UID 的真相</h3>
+<p>容器内执行 <code>useradd</code> 创建新用户，这个 UID 在宿主机视角： -
+如果没在 uid_map 里映射 → 就是 <code>nobody</code>（65534） -
+创建的文件所有者 → 实际是 nobody - 这个”用户”在宿主机上不存在</p>
+<p><strong>创造出来的全是空权限</strong>，建立在容器自己拥有的普通权限之上，不可能靠近真正的
+root。</p>
+<blockquote>
+<p>容器在这个空间里<strong>注定只能是普通权限</strong>。这不是限制它的地盘，而是限制它以为自己有的权限。</p>
+</blockquote>
+<h3 id="小结-5">6.9 小结</h3>
+<table>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>隔离内容</td>
+<td>UID/GID 身份映射</td>
+</tr>
+<tr class="even">
+<td>隔离方式</td>
+<td><strong>身份映射</strong>（<code>uid_map</code>/<code>gid_map</code>
+转换）</td>
+</tr>
+<tr class="odd">
+<td>是否需要 root</td>
+<td><strong>不需要！</strong> 普通用户可创建</td>
+</tr>
+<tr class="even">
+<td>Docker 默认</td>
+<td>❌ 不启用（兼容性原因）</td>
+</tr>
+<tr class="odd">
+<td>安全价值</td>
+<td>逃逸后仍是普通用户权限</td>
+</tr>
+<tr class="even">
+<td>危险配置</td>
+<td>映射到宿主机 UID 0、<code>--privileged</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>金句</strong>：USER Namespace 给容器内的 root 戴了一副”我是
+root”的面具。面具摘了（逃逸），还是普通用户。不是更高级，也不是更低级，就是同一个普通用户。</p>
+</blockquote>
+<hr />
+<h2 id="七六面墙一栋楼" data-anchor="summary">七、六面墙，一栋楼</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 13%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Namespace</th>
+<th>隔离什么</th>
+<th>隔离方式</th>
+<th>难度</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>UTS</strong></td>
+<td>hostname</td>
+<td>独立数据结构</td>
+<td>⭐</td>
+<td>各改各的 hostname</td>
+</tr>
+<tr class="even">
+<td><strong>PID</strong></td>
+<td>进程编号</td>
+<td>视图隔离</td>
+<td>⭐⭐</td>
+<td>独立的本地进程表</td>
+</tr>
+<tr class="odd">
+<td><strong>Network</strong></td>
+<td>网络资源</td>
+<td>独立协议栈</td>
+<td>⭐⭐</td>
+<td>各走一路，出网靠主机中转</td>
+</tr>
+<tr class="even">
+<td><strong>Mount</strong></td>
+<td>文件系统挂载</td>
+<td>挂载视图</td>
+<td>⭐⭐⭐</td>
+<td>换清单，容器还换根</td>
+</tr>
+<tr class="odd">
+<td><strong>IPC</strong></td>
+<td>进程间通信</td>
+<td>逻辑隔离</td>
+<td>⭐⭐⭐</td>
+<td>贴标签，不是切空间</td>
+</tr>
+<tr class="even">
+<td><strong>USER</strong></td>
+<td>用户身份</td>
+<td>身份映射</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>面具摘了还是普通人</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Linux 内核后续还加入了 <strong>Cgroup Namespace</strong>（隔离 cgroup
+视图，内核 4.6+）和 <strong>Time Namespace</strong>（隔离系统时间，内核
+5.6+）。这两个 Namespace
+在容器生态中应用尚不广泛，但了解它们的存在有助于完整理解 Linux
+的隔离体系。</p>
+</blockquote>
+<hr />
+<h2 id="八组合实验真实容器的隔离栈" data-anchor="experiment">八、组合实验：真实容器的隔离栈</h2>
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 同时启用 UTS + IPC + USER + PID + Network + Mount</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 这就是 Docker 默认的隔离配置（除了 USER）</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="ex">unshare</span> <span class="at">--uts</span> <span class="at">--ipc</span> <span class="at">--user</span> <span class="at">--map-root-user</span> <span class="at">--pid</span> <span class="at">--fork</span> <span class="at">--mount-proc</span> <span class="at">--net</span> <span class="at">--mount</span> /bin/bash</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 验证各层隔离</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="fu">hostname</span> container-full</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="fu">hostname</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: container-full</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="fu">id</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: uid=0(root) gid=0(root)  ← USER Namespace 映射</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ps</span> aux</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: PID 1 是 bash  ← PID Namespace 隔离</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a><span class="ex">ip</span> link</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 只有 lo  ← Network Namespace 隔离</span></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a><span class="ex">ipcs</span> <span class="at">-m</span></span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: （空）← IPC Namespace 隔离</span></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> /</span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 预期输出: 标准 Linux 目录  ← Mount Namespace + pivot_root</span></span></code></pre></div>
+<hr />
+<h2 id="九性能namespace-不是免费的但也没那么贵">九、性能：Namespace
+不是免费的，但也没那么贵</h2>
+<p>根据 2026 年 2 月发表的系统性测量研究（详见参考文献[1]），Linux
+namespace 创建在总启动时间中仅占 <strong>8–10
+ms（&lt;1.5%）</strong>。容器启动的主要开销来自运行时层和存储层，而非
+Namespace 本身。</p>
+<table>
+<thead>
+<tr class="header">
+<th>Namespace 类型</th>
+<th>创建开销</th>
+<th>主要开销来源</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>UTS</td>
+<td>最小</td>
+<td>分配 <code>struct uts_namespace</code></td>
+</tr>
+<tr class="even">
+<td>IPC</td>
+<td>较小</td>
+<td>分配 <code>struct ipc_namespace</code> + 初始化信号量数组</td>
+</tr>
+<tr class="odd">
+<td>PID</td>
+<td>中等</td>
+<td>分配 pid 哈希表 + 挂载 proc</td>
+</tr>
+<tr class="even">
+<td>Network</td>
+<td>较大</td>
+<td>分配 net_device + 路由表 + iptables 规则</td>
+</tr>
+<tr class="odd">
+<td>Mount</td>
+<td>最大</td>
+<td>复制挂载树（与挂载点数量成正比）</td>
+</tr>
+<tr class="even">
+<td>USER</td>
+<td>较小</td>
+<td>分配 <code>struct user_namespace</code> + uid_map 验证</td>
+</tr>
+</tbody>
+</table>
+<p><strong>/proc 遍历过滤开销</strong>：PID Namespace
+隔离后，<code>ps</code> 遍历 <code>/proc</code> 时内核需要检查每个进程的
+Namespace 归属。宿主机进程数越多（&gt;1000），过滤开销越明显。</p>
+<hr />
+<h2 id="十安全底线">十、安全底线</h2>
+<blockquote>
+<p><strong>Namespace 解决的是”视图隔离”，不是”权限控制”</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr class="header">
+<th>机制</th>
+<th>解决什么问题</th>
+<th>不解决什么问题</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Namespace</td>
+<td>进程”看不到”外面的资源</td>
+<td>进程”不能操作”外面的资源</td>
+</tr>
+<tr class="even">
+<td>Capabilities</td>
+<td>细粒度权限控制</td>
+<td>系统调用过滤</td>
+</tr>
+<tr class="odd">
+<td>Seccomp</td>
+<td>限制可使用的系统调用</td>
+<td>文件访问控制</td>
+</tr>
+<tr class="even">
+<td>AppArmor/SELinux</td>
+<td>强制访问控制（MAC）</td>
+<td>资源限制</td>
+</tr>
+<tr class="odd">
+<td>cgroups</td>
+<td>资源限制（CPU/内存/IO）</td>
+<td>安全隔离</td>
+</tr>
+</tbody>
+</table>
+<p><strong>真正的安全边界需要 Capabilities + Seccomp + AppArmor/SELinux
+组合。</strong></p>
+<p><strong>USER Namespace
+是最后一道防线</strong>：即使逃逸，也是普通人。</p>
+<hr />
+<h2 id="附录-arunc-spec-中的-namespace-配置">附录 A：runc spec 中的
+Namespace 配置</h2>
+<div class="sourceCode" id="cb45"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;linux&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;namespaces&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;pid&quot;</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;network&quot;</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;ipc&quot;</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;uts&quot;</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;mount&quot;</span><span class="fu">}</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;uidMappings&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;containerID&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;hostID&quot;</span><span class="fu">:</span> <span class="dv">1000</span><span class="fu">,</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="dv">1</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;gidMappings&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;containerID&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;hostID&quot;</span><span class="fu">:</span> <span class="dv">1000</span><span class="fu">,</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="dv">1</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>生成和验证：</p>
+<div class="sourceCode" id="cb46"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">runc</span> spec</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> config.json <span class="kw">|</span> <span class="ex">jq</span> <span class="st">&#39;.linux.namespaces&#39;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> config.json <span class="kw">|</span> <span class="ex">jq</span> <span class="st">&#39;.linux.uidMappings&#39;</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="ex">runc</span> run mycontainer</span></code></pre></div>
+<hr />
+<h2 id="附录-b危险参数速查表">附录 B：危险参数速查表</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 30%" />
+<col style="width: 20%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>风险等级</th>
+<th>影响</th>
+<th>何时可用</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>--uts=host</code></td>
+<td>🔴 高危</td>
+<td>容器改 hostname 影响宿主机</td>
+<td>几乎不用</td>
+</tr>
+<tr class="even">
+<td><code>--pid=host</code></td>
+<td>🔴 高危</td>
+<td>容器看到/操作宿主机所有进程</td>
+<td>调试时短暂使用</td>
+</tr>
+<tr class="odd">
+<td><code>--network host</code></td>
+<td>🔴 高危</td>
+<td>容器绑定宿主机端口，可抓包所有流量</td>
+<td>性能敏感型应用</td>
+</tr>
+<tr class="even">
+<td><code>--ipc=host</code></td>
+<td>🟠 中危</td>
+<td>容器访问宿主机共享内存</td>
+<td>遗留应用兼容</td>
+</tr>
+<tr class="odd">
+<td><code>-v /:/host</code></td>
+<td>🔴 高危</td>
+<td>容器直接读写宿主机根目录</td>
+<td>几乎不用</td>
+</tr>
+<tr class="even">
+<td><code>--privileged</code></td>
+<td>🔴 极高危</td>
+<td>容器获得真正 root + 所有 capabilities</td>
+<td>绝对避免</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="附录-c术语表">附录 C：术语表</h2>
+<table>
+<thead>
+<tr class="header">
+<th>术语</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>视图隔离</td>
+<td>内核维护了独立的分配空间/协议栈，给你看不同的表</td>
+</tr>
+<tr class="even">
+<td>逻辑隔离</td>
+<td>全局表 + 过滤条件</td>
+</tr>
+<tr class="odd">
+<td>身份映射</td>
+<td>UID/GID 映射表转换</td>
+</tr>
+<tr class="even">
+<td>挂载视图</td>
+<td>每个进程独立的挂载点列表</td>
+</tr>
+<tr class="odd">
+<td>独立协议栈</td>
+<td>完整的网络环境隔离</td>
+</tr>
+<tr class="even">
+<td>pivot_root</td>
+<td>切换 mount namespace 的 rootfs</td>
+</tr>
+<tr class="odd">
+<td>独立数据结构</td>
+<td>内核分配独立的数据结构副本</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="附录-d常见误区速查表">附录 D：常见误区速查表</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>❌ 错误认知</th>
+<th>✅ 正确理解</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“PID Namespace 切断了进程间的所有联系”</td>
+<td>“是视图隔离，同一 Namespace 内进程完全互通”</td>
+</tr>
+<tr class="even">
+<td>“Mount Namespace 隔离了文件内容”</td>
+<td>“隔离的是挂载点清单，底层文件可能共享”</td>
+</tr>
+<tr class="odd">
+<td>“USER Namespace 让容器更安全”</td>
+<td>“默认不启用，启用后需处理文件权限冲突”</td>
+</tr>
+<tr class="even">
+<td>“IPC Namespace 是真隔离”</td>
+<td>“是逻辑隔离，基于全局表过滤”</td>
+</tr>
+<tr class="odd">
+<td>“Network Namespace 完全隔离网络”</td>
+<td>“veth 和网桥让隔离有条件，出网依赖主机”</td>
+</tr>
+<tr class="even">
+<td>“USER Namespace 需要 root 才能创建”</td>
+<td>“普通用户即可创建，需内核支持”</td>
+</tr>
+<tr class="odd">
+<td>“Mount Namespace 创建后自动完全隔离”</td>
+<td>“默认传播类型可能是 shared，需显式设置 private”</td>
+</tr>
+<tr class="even">
+<td>“br0 做三层转发”</td>
+<td>“br0 是二层交换机，三层转发由主机内核路由子系统处理”</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<hr />
+<p><strong>系列导航</strong>： - 本文：Namespace 隔离机制（六面墙） -
+下一篇：cgroups 资源限制（配重块） - 计划：Capabilities 权限管理 →
+Seccomp 系统调用过滤 → AppArmor/SELinux 强制访问控制</p>
+<hr />
+<h2 id="最后">最后</h2>
+<p>Namespace
+不是魔法，是内核给进程换了一副眼镜。六副镜片，六种视角。</p>
+<p><strong>但记住：眼镜换得再好，也挡不住有人把门踹开。</strong></p>
+<p>Namespace 隔离的是”看到什么”，Capabilities、Seccomp、AppArmor
+才管”能做什么”。USER Namespace
+是最后一道保险——即使有人踹开门逃出来，他也只是个普通人。</p>
+<p>这副眼镜能遮住视线，但遮不住贪婪。</p>
+<blockquote>
+<p>如果这篇文章对你有帮助，欢迎
+在评论区留下你的实验结果。我踩过的坑，希望你不用重踩一遍，尤其是断网，可能是我电脑的原因，但是最好还是提防，核心原文是我自己对原理的了解，AI修改文章建立在我了解的基础上，如果有错误可以纠正，正在持续更新高质量文章…….</p>
+</blockquote>
+<hr />
+</div></div>
+</body>
+</html>

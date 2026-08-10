@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>liqiu - 容器安全博客</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-card: #141414;
+            --bg-hover: #1a1a1a;
+            --red-primary: #ff3333;
+            --red-bright: #ff5555;
+            --red-dim: #cc2222;
+            --red-glow: rgba(255, 51, 51, 0.3);
+            --text-primary: #e8e8e8;
+            --text-secondary: #999999;
+            --text-dim: #666666;
+            --border: #222222;
+            --border-hover: #333333;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'JetBrains Mono', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 粒子画布 */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 扫描线效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 51, 51, 0.02) 2px,
+                rgba(255, 51, 51, 0.02) 4px
+            );
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 左侧边栏 */
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 35px 22px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        /* 个人信息 */
+        .profile {
+            text-align: center;
+            margin-bottom: 45px;
+            position: relative;
+        }
+
+        .profile::after {
+            content: '';
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--red-primary), transparent);
+        }
+
+        .name-box {
+            display: inline-block;
+            border: 1px solid var(--red-primary);
+            border-radius: 4px;
+            padding: 14px 32px;
+            margin-bottom: 18px;
+            background: rgba(255, 51, 51, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .name-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 51, 51, 0.2), transparent);
+            animation: scan 3s infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .name-box h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 26px;
+            color: var(--red-primary);
+            letter-spacing: 3px;
+            font-weight: 700;
+            text-shadow: 0 0 20px var(--red-glow);
+            position: relative;
+        }
+
+        .profile-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 2.2;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .profile-info span {
+            color: var(--red-bright);
+        }
+
+        /* 导航栏 */
+        .nav-section {
+            flex: 1;
+        }
+
+        .nav-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-dim);
+            margin-bottom: 18px;
+            padding-left: 12px;
+            border-left: 2px solid var(--red-primary);
+        }
+
+        .nav-item {
+            display: block;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 51, 51, 0.08);
+            color: var(--red-bright);
+            border-left-color: var(--red-primary);
+            padding-left: 20px;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 51, 51, 0.12);
+            color: var(--red-primary);
+            border-left-color: var(--red-primary);
+            text-shadow: 0 0 10px var(--red-glow);
+        }
+
+        /* 链接按钮 */
+        .links-section {
+            margin-top: auto;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+        }
+
+        .link-btn {
+            display: flex;
+            align-items: center;
+            padding: 11px 16px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(255, 51, 51, 0.1);
+            transition: width 0.3s ease;
+        }
+
+        .link-btn:hover::before {
+            width: 100%;
+        }
+
+        .link-btn:hover {
+            border-color: var(--red-dim);
+            color: var(--red-bright);
+            transform: translateX(4px);
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.15);
+        }
+
+        .link-btn svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            fill: currentColor;
+            position: relative;
+            z-index: 1;
+        }
+
+        .link-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            min-width: 0;
+            padding: 35px 50px;
+            width: calc(100% - 280px);
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            margin-bottom: 35px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 14px 24px 14px 48px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .search-input:focus {
+            border-color: var(--red-primary);
+            box-shadow: 0 0 0 3px rgba(255, 51, 51, 0.15), 0 0 20px rgba(255, 51, 51, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 600px;
+        }
+
+        .search-wrapper::before {
+            content: '>';
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--red-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            z-index: 2;
+        }
+
+        /* 文章列表 */
+        .article-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .article-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 32px 36px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--red-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .article-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: 0 4px 30px rgba(255, 51, 51, 0.1), 0 0 60px rgba(255, 51, 51, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .article-card:hover::before {
+            opacity: 1;
+        }
+
+        .article-card.hidden {
+            display: none;
+        }
+
+        .article-title {
+            font-size: 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 14px;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .article-title:hover {
+            color: var(--red-bright);
+            text-shadow: 0 0 20px var(--red-glow);
+        }
+
+        .article-meta {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .article-meta span {
+            color: var(--red-dim);
+        }
+
+        .article-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .article-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            border-radius: 3px;
+            background: rgba(255, 51, 51, 0.08);
+            color: var(--red-bright);
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid rgba(255, 51, 51, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(255, 51, 51, 0.15);
+            border-color: var(--red-primary);
+        }
+
+        /* 文章原文跳转链接 */
+        .article-source {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 3px;
+            background: rgba(255, 51, 51, 0.06);
+            border: 1px solid rgba(255, 51, 51, 0.15);
+            color: var(--red-bright);
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .article-source::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(255, 51, 51, 0.12);
+            transition: width 0.3s ease;
+        }
+
+        .article-source:hover::before {
+            width: 100%;
+        }
+
+        .article-source:hover {
+            border-color: var(--red-primary);
+            color: var(--red-primary);
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.15);
+        }
+
+        .article-source svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+            position: relative;
+            z-index: 1;
+        }
+
+        .article-source span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-dim);
+            font-size: 15px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--red-dim);
+        }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 240px;
+                min-width: 240px;
+            }
+            .main-content {
+                margin-left: 240px;
+                width: calc(100% - 240px);
+                padding: 25px 30px;
+            }
+        }
+    </style>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="name-box">
+                    <h1>liqiu</h1>
+                </div>
+                <div class="profile-info">
+                    <div>AGE: <span>17</span></div>
+                    <div>QQ: <span>1703413136</span></div>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">导航栏</div>
+                <a class="nav-item active" data-category="container-security">容器安全文章系列</a>
+            </div>
+
+            <div class="links-section">
+                <a href="https://github.com/lqiuya/liqiu" target="_blank" class="link-btn">
+                    <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    <span>GitHub</span>
+                </a>
+                <a href="https://so.gitee.com/?q=wuyudeliqiu" target="_blank" class="link-btn">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    <span>Gitee</span>
+                </a>
+                <a href="https://blog.csdn.net/jiangshanglixin?spm=1018.2226.3001.5343" target="_blank" class="link-btn">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <span>CSDN</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <div class="search-bar">
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" id="searchInput" placeholder="SEARCH ARTICLES...">
+                </div>
+            </div>
+
+            <div class="article-list" id="articleList">
+                <article class="article-card" data-title="容器安全之 Linux Namespace 6大隔离机制">
+                    <a href="#" class="article-title">容器安全之～Linux Namespace 6大隔离机制：PID 隔离、网络隔离、挂载隔离、UTS 隔离、IPC 隔离、用户隔离</a>
+                    <div class="article-meta">[ <span>2026-08-09</span> ]  容器安全系列  //  阅读时间: 1小时</div>
+                    <div class="article-footer">
+                        <div class="article-tags">
+                            <span class="tag">Linux Namespace</span>
+                            <span class="tag">PID</span>
+                            <span class="tag">Network</span>
+                            <span class="tag">Mount</span>
+                            <span class="tag">UTS</span>
+                            <span class="tag">IPC</span>
+                            <span class="tag">User</span>
+                        </div>
+                        <a href="https://blog.csdn.net/jiangshanglixin/article/details/163613284?spm=1001.2014.3001.5502" target="_blank" class="article-source">
+                            <svg viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5c-1.11 0-2 .89-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg>
+                            <span>文章原文</span>
+                        </a>
+                    </div>
+                </article>
+            </div>
+
+            <div class="no-results" id="noResults" style="display: none;">
+                [ NO MATCHING ARTICLES FOUND ]
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 粒子特效 - 红色科幻风
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 60;
+        const connectionDistance = 150;
+        const mouseDistance = 200;
+
+        let mouse = { x: null, y: null };
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.opacity = Math.random() * 0.4 + 0.1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+                if (mouse.x != null) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouseDistance) {
+                        const force = (mouseDistance - distance) / mouseDistance;
+                        this.vx += (dx / distance) * force * 0.015;
+                        this.vy += (dy / distance) * force * 0.015;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 51, 51, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 51, 51, ${0.15 * (1 - distance / connectionDistance)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const articleList = document.getElementById('articleList');
+        const noResults = document.getElementById('noResults');
+        const articles = articleList.querySelectorAll('.article-card');
+
+        searchInput.addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase().trim();
+            let hasResult = false;
+
+            articles.forEach(article => {
+                const title = article.getAttribute('data-title').toLowerCase();
+                if (title.includes(keyword)) {
+                    article.classList.remove('hidden');
+                    hasResult = true;
+                } else {
+                    article.classList.add('hidden');
+                }
+            });
+
+            noResults.style.display = hasResult ? 'none' : 'block';
+        });
+    </script>
+</body>
+</html>
