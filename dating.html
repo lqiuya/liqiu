@@ -269,14 +269,24 @@
             width: calc(100% - 280px);
         }
 
+        /* 顶部栏 */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
         /* 搜索栏 */
         .search-bar {
-            margin-bottom: 35px;
+            flex: 1;
+            max-width: 600px;
         }
 
         .search-input {
             width: 100%;
-            max-width: 600px;
             padding: 14px 24px 14px 48px;
             border: 1px solid var(--border);
             border-radius: 4px;
@@ -315,6 +325,61 @@
             z-index: 2;
         }
 
+        /* 网站记录/介绍按钮 */
+        .about-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 4px;
+            background: var(--bg-card);
+            border: 1px solid var(--red-primary);
+            color: var(--red-primary);
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .about-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(255, 51, 51, 0.12);
+            transition: width 0.3s ease;
+        }
+
+        .about-btn:hover::before {
+            width: 100%;
+        }
+
+        .about-btn:hover {
+            color: var(--red-bright);
+            border-color: var(--red-bright);
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .about-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
         /* 文章列表 */
         .article-list {
             display: flex;
@@ -330,6 +395,10 @@
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
         }
 
         .article-card::before {
@@ -369,7 +438,7 @@
             font-weight: 500;
         }
 
-        .article-title:hover {
+        .article-card:hover .article-title {
             color: var(--red-bright);
             text-shadow: 0 0 20px var(--red-glow);
         }
@@ -432,6 +501,7 @@
             position: relative;
             overflow: hidden;
             white-space: nowrap;
+            z-index: 2;
         }
 
         .article-source::before {
@@ -508,8 +578,6 @@
         }
     </style>
 <base target="_blank">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
     <canvas id="particles-canvas"></canvas>
@@ -550,15 +618,21 @@
 
         <!-- 主内容区 -->
         <main class="main-content">
-            <div class="search-bar">
-                <div class="search-wrapper">
-                    <input type="text" class="search-input" id="searchInput" placeholder="SEARCH ARTICLES...">
+            <div class="top-bar">
+                <div class="search-bar">
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" id="searchInput" placeholder="SEARCH ARTICLES...">
+                    </div>
                 </div>
+                <a href="https://lqiuya.github.io/liqiu/jieshao.html" target="_blank" class="about-btn">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <span>网站记录/介绍</span>
+                </a>
             </div>
 
             <div class="article-list" id="articleList">
-                <article class="article-card" data-title="容器安全之 Linux Namespace 6大隔离机制">
-                    <a href="6namespace.html" class="article-title">容器安全之～Linux Namespace 6大隔离机制：PID 隔离、网络隔离、挂载隔离、UTS 隔离、IPC 隔离、用户隔离</a>
+                <a href="6namespace.html" class="article-card" data-title="容器安全之 Linux Namespace 6大隔离机制">
+                    <div class="article-title">容器安全之～Linux Namespace 6大隔离机制：PID 隔离、网络隔离、挂载隔离、UTS 隔离、IPC 隔离、用户隔离</div>
                     <div class="article-meta">[ <span>2026-08-09</span> ]  容器安全系列  //  阅读时间: 1小时</div>
                     <div class="article-footer">
                         <div class="article-tags">
@@ -570,12 +644,12 @@
                             <span class="tag">IPC</span>
                             <span class="tag">User</span>
                         </div>
-                        <a href="https://blog.csdn.net/jiangshanglixin/article/details/163613284?spm=1001.2014.3001.5501" target="_blank" class="article-source">
+                        <a href="https://blog.csdn.net/jiangshanglixin/article/details/163613284?spm=1001.2014.3001.5501" target="_blank" class="article-source" onclick="event.stopPropagation();">
                             <svg viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5c-1.11 0-2 .89-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/></svg>
                             <span>文章原文</span>
                         </a>
                     </div>
-                </article>
+                </a>
             </div>
 
             <div class="no-results" id="noResults" style="display: none;">
