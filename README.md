@@ -1,16 +1,15 @@
-# liqiu 容器安全博客
+# liqiu 的个人网站/博客
 
 ## 大厅首页
 **https://lqiuya.github.io/liqiu/dating.html**
 
-博客主入口，展示所有文章卡片列表。支持搜索过滤，红色科幻风格粒子背景。
-
+主入口，
 ---
 
 ## 网站介绍
 **https://lqiuya.github.io/liqiu/jieshao.html**
 
-个人简介、博客定位、技术路线说明。
+未来目标、博客定位、技术路线说明
 
 ---
 
